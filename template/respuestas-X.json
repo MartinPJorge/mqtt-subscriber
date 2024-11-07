@@ -4,12 +4,12 @@
 "alumna3": "Luz Martín Santos",
 "lectura": {},
 "maxtemp": 0, 
-"reqtype": 4,
+"reqtype": 0,
 "subsqos": 10,
 "pubport": 0,
 "subport": 0,
  "nummetricas": 0,
  "pubacktopic": "",
- "numalerts": 2,
- "qosalerts": 0
+ "numalerts": 200,
+ "qosalerts": 10
 }
