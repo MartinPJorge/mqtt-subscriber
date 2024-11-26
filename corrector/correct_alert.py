@@ -51,7 +51,7 @@ for pkt in cap:
 
 
         if pkt[l]._all_fields['mqtt.msgtype'] == '3': # PUBLISH
-            alerts += int(pkt[l]._all_fields['mqtt.topic']=='vitals/alert')
+            alerts += int(pkt[l]._all_fields['mqtt.topic']=='alerts/hr')
             alert_qos = int(pkt[l]._all_fields['mqtt.qos'])
 
 

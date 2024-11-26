@@ -44,7 +44,7 @@ for pkt in cap:
             # print(pkt[l]._all_fields)
 
             # Store the duplicate Message Idx
-            if pkt[l]._all_fields['mqtt.topic'] == 'vitals/temp':
+            if pkt[l]._all_fields['mqtt.topic'] in ['vitals/temp', 'vitals/TEMP']:
                 # Get the PUBLISH payload as string
                 # https://stackoverflow.com/a/66073701
                 hex_string = str(pkt[l]._all_fields['mqtt.msg'])
@@ -52,7 +52,18 @@ for pkt in cap:
                 hex_as_chars = map(lambda hex: chr(int(hex, 16)), hex_split)
                 human_readable = ''.join(hex_as_chars)
 
-                temps += [float(human_readable)]
+                # skip reported column header
+                if 'TEMP (*C)' in human_readable:
+                    continue
+
+                if human_readable[0] == '{': # it is a JSON
+                    temp_dict = json.loads(human_readable)
+                    temp = temp_dict['TEMP'] if 'TEMP' in temp_dict.keys()\
+                        else temp_dict['temp']
+                else:
+                    temp = float(human_readable)
+
+                temps += [temp]
 
 print(int(max(temps) == respuestas['maxtemp']))
 

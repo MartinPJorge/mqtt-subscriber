@@ -53,7 +53,8 @@ for pkt in cap:
             subs_port = int(pkt['TCP']._all_fields['tcp.dstport'])
 
 
-print(int( int(respuestas['reqtype'])==8) )
+
+print(int( '8' in str(respuestas['reqtype'])) )
 print(int( int(respuestas['subsqos'])==subs_req_qos) )
 print(int( int(respuestas['pubport'])==client_port) )
 print(int( int(respuestas['subport'])==subs_port) )

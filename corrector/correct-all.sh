@@ -5,8 +5,7 @@
 entregas=$1 # path to DIR with ONLY ZIPs of entregas
 
 # Create CSV with corrections
-echo "student,grupo,lectura,maxtemp,reqtype,subsqos,pubport,subport,nummetricas,pubacktopic,numalerts,qosalerts,total"
-> notas.csv
+echo "student,grupo,lectura,maxtemp,reqtype,subsqos,pubport,subport,nummetricas,pubacktopic,numalerts,qosalerts,total" > notas.csv
 
 
 # Put there just the files avoiding folder recursion
@@ -18,27 +17,27 @@ function add_bc {
     echo "scale=2; $1 + $2" | bc
 }
 
-### for entrega in `ls $entregas`; do
-###     # UNZIP submited LAB
-###     out_zip=/tmp/${entrega::-4}
-###     unzip $entregas/$entrega -d $out_zip 
-### 
-###     # Create correction DIR
-###     clean_out=/tmp/clean-entregas/${entrega::-4}
-###     mkdir $clean_out
-### 
-###     # Copy the JSONs, PCAPNG and LOGs
-###     for ext in `echo json pcapng log jpeg png`; do
-###         for file in `find $out_zip -name *$ext`; do
-###             # Get filename: https://stackoverflow.com/a/32372307
-###             fname=`echo "$file" | sed "s/.*\///"`
-###             cp $file $clean_out/$fname
-###         done
-###     done
-### 
-###     # Copy the vitals signs dataset
-###     cp Human_vital_signs_R.csv $clean_out
-### done
+for entrega in `ls $entregas`; do
+    # UNZIP submited LAB
+    out_zip=/tmp/${entrega::-4}
+    unzip $entregas/$entrega -d $out_zip 
+
+    # Create correction DIR
+    clean_out=/tmp/clean-entregas/${entrega::-4}
+    mkdir $clean_out
+
+    # Copy the JSONs, PCAPNG and LOGs
+    for ext in `echo json pcapng log jpeg png`; do
+        for file in `find $out_zip -name *$ext`; do
+            # Get filename: https://stackoverflow.com/a/32372307
+            fname=`echo "$file" | sed "s/.*\///"`
+            cp $file $clean_out/$fname
+        done
+    done
+
+    # Copy the vitals signs dataset
+    cp Human_vital_signs_R.csv $clean_out
+done
 
 
 
@@ -98,7 +97,7 @@ for submission in `ls /tmp/clean-entregas`; do
 
     # Correct subscribe multiple topics
     subs_alert=`python3 correct_alert.py $X $group_dir/alerts-grupo$X.pcapng $group_dir/respuestas-$X.json`
-    questions=( "nummetricas" "pubacktopic" )
+    questions=( "numalerts" "qosalerts" )
     subs_alert_all=""
     i=0
     for subsi in `echo $subs_alert`; do

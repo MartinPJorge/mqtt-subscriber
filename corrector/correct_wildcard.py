@@ -54,7 +54,13 @@ for pkt in cap:
                 puback_topic = pkt[l]._all_fields['mqtt.topic']
 
 
-print(int(respuestas['nummetricas']==len(set(topics))))
+# maybe Idx and time are not considered
+nummetricas = max( int(respuestas['nummetricas']==len(set(topics))),
+    int(respuestas['nummetricas']==len(set(topics).difference({'idx','time'})))
+        )
+
+
+print(nummetricas)
 print(int(respuestas['pubacktopic']==puback_topic))
 
 

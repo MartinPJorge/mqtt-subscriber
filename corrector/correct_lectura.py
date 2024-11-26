@@ -20,9 +20,10 @@ num_cols_ok = len(respuestas['lectura'].keys()) / len(read_dict.keys())
 #print(respuestas['lectura'])
 
 num_vals_ok = 0
+lectura_lower_case_keys = [k.lower() for k in respuestas['lectura']]
+#print(lectura_lower_case_keys)
 for k,v in read_dict.items():
-    if k in respuestas['lectura']:
-        num_vals_ok += respuestas['lectura'][k] == read_dict[k]
+    num_vals_ok += 1 if k in lectura_lower_case_keys else 0
 num_vals_ok /= len(read_dict.keys())
 #print(num_vals_ok)
 
