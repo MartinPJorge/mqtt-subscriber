@@ -99,7 +99,7 @@ que debe realizar para conseguir resolver el
 mini-reto:
 
 
-\begin{enumerate}[label=\textbf{Actividad {{\arabic*}}}.]
+\begin{enumerate}[label=\textbf{Actividad {{\arabic*}}}]
     \item Estudie los \textbf{Recursos} del mini-reto para entender cuáles son los componentes del escenario de laboratorio. Revise las referencias proporcionadas para el estudio del protocolo MQTT, especialmente la lógica de suscripción y recepción de mensajes.
     \item Antes de comenzar a programar el script \texttt{subs.py}, inicie el broker EMQX. Para ello, sírvase de las instrucciones de la práctica anterior. Verifique que el contenedor del bróker está activo y que el panel de administración web es accesible desde su navegador:
         \begin{center}
@@ -133,18 +133,30 @@ $ python3
 \end{lstlisting}
 donde $X$ es el número del grupo al que
 pertenece.
-Responda al \ref{pregunta-lectura}.
+Responda a la \ref{pregunta-lectura}.
 
     \item \label{actividad-publish} Modifique el script (\texttt{client.py}) para que, usando el diccionario
-        obtenido en \texttt{line\_to\_dict(fpath, line)},  publique cada constante vital en un topic independiente (formato: \texttt{vitals/metrica}) usando QoS~1.
+        obtenido en \texttt{line\_to\_dict(fpath, line)},  publique las constantes vitales
+        \texttt{hr,resp,SpO2} y \texttt{temp}
+        en topics independientes (formato: \texttt{vitals/metrica}) usando QoS~1.
         Responda a la \ref{pregunta-publish}.
-    \item  Haga pruebas para enviar las constantes del paciente al broker EMQX. Capture el tráfico con Wireshark sobre la interfaz lo de la máquina que emula el paciente y guarde el archivo como (sending-grupoX.pcapng), donde X corresponde al número de su grupo. JSON respuestas valor máximo de temp
-    \item  Modifique el script (\texttt{subs.py}) para que se suscriba exclusivamente al topic vitals/temp a través del broker EMQX. Con estas modificaciones, capture el tráfico con Wireshark sobre la interfaz lo y guarde el resultado (receiving-grupoX.pcapng). --  subs-temp-grupoX.pcapng
-    \item  A continuación, verifique que las métricas de temperatura se reciben correctamente. Obtenga una nueva captura de tráfico y guarde el archivo con el nombre subs-temp-grupoX.pcapng. -- REDUNDANTE, ES LO MISMO QUE ANTES
-    \item HAY QUE METER LAS PREGUNTAS DEL P3-P6
-    \item  Modifique el script (\texttt{subs.py}) para que utilice un wildcard en el topic de suscripción, permitiendo así recibir todas las métricas publicadas por (\texttt{client.py}).
-    \item Inicie una captura de tráfico en Wireshark sobre la interfaz lo, y ejecute (\texttt{client.py}) y (\texttt{subs.py}). Deje que se publiquen aproximadamente veinte mensajes PUBLISH y guarde la captura como (subs-wildcard-grupoX.pcapng).
-    \item Modifique el script \texttt{subs.py} para que, al recibir mensajes del topic vitals/hr, analice si el valor recibido excede en más de un $15\%$ el valor medio esperado de 89 BPM. Si se detecta esta anomalía, el script deberá generar una alerta publicando un nuevo mensaje en el topic alerts/hr, con el número de BPM como contenido del mensaje. Inicie una captura de tráfico en Wireshark sobre la interfaz lo. Ejecute (\texttt{client.py}) y (\texttt{subs.py}) y espere a que se detecten y publiquen al menos un par de alertas. Guarde la captura resultante con el nombre (alertas-grupoX.pcapng).
+    \item\label{actividad-subscribe}  Programe el script (\texttt{subs.py}) para que se suscriba exclusivamente al topic \texttt{vitals/temp} a través del broker EMQX.
+        Responda a las siguientes preguntas:
+        \ref{pregunta-subscribe},
+      \ref{pregunta-qos},
+    \ref{pregunta-puerto},
+      \ref{pregunta-puerto-subs}.
+
+      \item \label{actividad-wildcard} Programe el script (\texttt{subs.py}) para que utilice un wildcard en el topic de suscripción, permitiendo así recibir todas las métricas publicadas por (\texttt{client.py}).
+        Responda a la
+        \ref{pregunta-cuantas-metricas} y
+        \ref{pregunta-topic-10}.
+
+    \item
+        \label{actividad-alertas}
+        Modifique el script \texttt{subs.py} para que, al recibir mensajes del topic \texttt{vitals/hr}, analice si el valor recibido excede en más de un $\tfrac{X}{100}\%$ el valor medio de  $89$\,\textrm{BPM}. Si se detecta esta anomalía, el script deberá generar una alerta publicando un nuevo mensaje en el topic \texttt{alerts/hr}, con el número de BPM como contenido del mensaje. Responda a la
+         \ref{pregunta-cuantas-alertas} y
+         \ref{pregunta-alertas-qos}.
 \end{enumerate}
 
 
@@ -156,7 +168,7 @@ actividades guiadas de la práctica.
 Respóndalas para preparar el material
 de entrega que servirá para evaluar cómo
 se ha enfrentado a este mini-reto:
-\begin{enumerate}[label=\textbf{Problema {{\arabic*}}}.]
+\begin{enumerate}[label={\bf Pregunta \arabic*}]
     \item \label{pregunta-lectura}
         Guarde el resultado
         de la
@@ -166,12 +178,14 @@ se ha enfrentado a este mini-reto:
         de respuestas.
     \item \label{pregunta-publish}
         Tras hacer la \ref{actividad-publish}
-        ejecute el \texttt{client.py} para que reporte las constantes
+        inicie una
+        captura en Wireshark en la interfaz
+        \texttt{lo}. 
+        Ejecute el \texttt{client.py} para que reporte las constantes
         al broker EMQX\footnote{Recuerde identificar
         el puerto y dirección usados por EMQX para
-        las comunicaciones MQTT.}, inicie una
-        captura en Wireshark en la interfaz
-        \texttt{lo}. Deje que se publiquen
+        las comunicaciones MQTT.}.
+        Deje que se publiquen
         varias constantes vitales y guarde\footnote{
         Recuerde que todas las capturas
         de la práctica deben contener
@@ -186,8 +200,83 @@ se ha enfrentado a este mini-reto:
         captura? Responda en el campo
         \texttt{maxtemp} del JSON de respuestas.
 
-\end{enumerate}
+    \item\label{pregunta-subscribe}
+        Tras realizar la
+        \ref{actividad-subscribe}
+        inicie una captura Wireshark
+        en la interfaz \texttt{lo}, después
+        ejecture
+        \texttt{client.py} y
+        \texttt{sub.py}.
+        Guarde la captura en\\
+        \texttt{subs-temp-grupoX.pcapng}.
+        ¿Cuál es el tipo de mensaje
+      del\\
+      \texttt{Subscribe request}?
+    Responda a la pregunta en el campo
+    \texttt{reqtype}
+    del JSON de respuestas.
 
+      \item\label{pregunta-qos} ¿Con qué QoS se suscribe
+      al topic \texttt{vitals/temp}?
+    Responda a la pregunta en el campo
+    \texttt{subsqos} del JSON de respuestas.
+
+    \item\label{pregunta-puerto} ¿Cuál es el puerto
+      utilizado por el
+      cliente para publicar mensajes?
+    Responda a la pregunta en el campo
+    \texttt{pubport} del JSON de respuestas.
+
+    \item\label{pregunta-puerto-subs} ¿Cuál es el puerto
+        utilizado por el
+        suscriptor para recibir mensajes?
+    Responda a la pregunta en el campo
+    \texttt{subport} del JSON de respuestas.
+
+    \item\label{pregunta-cuantas-metricas}
+        Tras realizar la
+        \ref{actividad-wildcard}
+        inicie una captura Wireshark
+        y ejecute el \texttt{client.py} y
+        \texttt{subs.py}. Deje que se publiquen
+        unos veinte \texttt{PUBLISH} y guarde
+        en\\
+        \texttt{subs-wildcard-grupoX.pcapng}
+        la captura de Wireshark.
+        ¿A cuántas métricas se suscribe el \texttt{subs.py}?
+        Responda en el campo
+        \texttt{nummetricas} del JSON
+        de respuestas.
+    \item\label{pregunta-topic-10}
+        ¿Cuál es el topic del
+        \texttt{PUBACK} con
+        \texttt{Message identifier} $10+X$?
+        Responda en el campo
+        \texttt{pubacktopic} del JSON
+        de respuestas.
+
+    \item\label{pregunta-cuantas-alertas}
+        Tras realizar la
+        \ref{actividad-alertas}
+        inicie una captura de tráfico en Wireshark sobre la interfaz \texttt{lo}.
+        Ejecute \texttt{client.py} y
+        \texttt{subs.py} y espere a que se
+        detecten y publiquen al menos un
+        par de alertas.
+        Guarde la captura resultante con el
+        nombre \texttt{alertas-grupoX.pcapng}.
+        ¿Cuántas alertas se envían?
+        Responda en el campo \texttt{numalerts}
+        del JSON de respuestas.
+
+
+    \item\label{pregunta-alertas-qos}
+        ¿Cuál es la QoS con la que se envían
+        las alertas?
+        Responda en el campo \texttt{qosalerts}
+        del JSON de respuestas.
+\end{enumerate}
 
 
 
@@ -202,344 +291,12 @@ se ha enfrentado a este mini-reto:
 
 \subsection*{Documentación para la implementación}
 \begin{enumerate}
+    \item Descripción del escenario de
+        alertas médicas (disponible
+        en Moodle).
     \item Broker MQTT (broker.emqx.io) (disponible en: \url{https://docs.datadoghq.com/es/integrations/emqx/})
     \item Published/Subscriber MQTT con EMQX: \url{https://www.emqx.com/en/blog/how-to-use-mqtt-in-python}
 \end{enumerate}
-
-
-
-
-
-
-\section*{Introducción}
-
-\noindent
-En esta práctica\footnote{Todas las preguntas
-tienen el mismo valor/puntuación.
-}\footnote{Este material está protegido por la
-licencia
-CC BY-NC-SA 4.0.
-\byncsa
-} vamos a programar un
-suscriptor MQTT \texttt{subs.py}
-que recolecte las métricas
-publicadas por el cliente \texttt{client.py}.
-Para ello
-abriremos una suscripción con el broker
-y nos suscribiremos a los topics de
-reporte de métricas. Finalmente,
-haremos un detector de anomalías en
-el pulso para publicar alertas desde
-el \texttt{subs.py}.
-La figura mostrada a continuación resalta
-con fondo oscuro las componentes que
-modificaremos:
-\begin{figure}[h]
-    \centering
-\begin{tikzpicture}
-    \node[draw,rectangle] (sensor) at (0,0)
-        {sensor};
-    \node[draw,rectangle] (script)
-        at ($(sensor)+(0,-1)$)
-        {\texttt{reporter.sh}};
-    \node[draw,rectangle,anchor=west]
-        (report)
-        at ($(script.east)+(1,0)$)
-        {\texttt{report.csv}};
-    \node[draw,rectangle,fill=gray!30]
-        (utils)
-        at ($(report)+(0,1)$)
-        {\texttt{utils.py}};
-    \node[draw,rectangle,fill=gray!30]
-        (client)
-        at ($(utils)+(0,1)$)
-        {\texttt{client.py}};
-    \node[draw,rectangle,fill=gray!30,
-        align=center]
-        (server)
-        at ($(client)+(2.5,0)$)
-        {broker\\emqx};
-    \node[draw,rectangle,fill=gray!30]
-        (datasource)
-        at ($(server)+(3,0)$)
-        {\texttt{subs.py}};
-
-    \draw[arrows=<->] (sensor.south)
-        -- (script.north);
-    \draw[arrows=->] (script.east)
-        -- (report.west);
-    \draw[arrows=<->] (report.north)
-        -- (utils.south);
-    \draw[arrows=<->] (utils.north)
-        -- (client.south);
-    \draw[arrows=<->] (client.east)
-        --
-        node[midway,above]
-        {pub}
-        (server.west);
-    \draw[arrows=<->] (server.east)
-        --
-        node[midway,above]
-        {sub/pub}
-        (datasource.west);
-
-
-
-\end{tikzpicture}
-\caption{escenario de la práctica.}
-\label{fig:escenario}
-\end{figure}
-
-
-
-
-\section*{Arrancar broker EMQX}
-\noindent
-Antes de comenzar a programar el
-\texttt{subscriber.py} tenemos que
-arrancar el broker EMQX. Para ello siga
-los pasos de la práctica anterior.
-En caso de que el contenedor del broker
-EMQX ya esté disponible, ejecute el
-siguiente comando para arrancarlo de nuevo:
-\begin{lstlisting}[language=bash]
-$ docker start `docker ps | grep "emqx:5.0.2"\
-  | cut -d' ' -f1`
-\end{lstlisting}
-Puede comprobar que el broker se está
-ejecutando correctamente accediendo al
-panel de EMQX desde el navegador:
-\begin{center}
-    \url{localhost:18083}
-\end{center}
-usando el como nombre de usuario
-\texttt{admin} y como contraseña
-\texttt{public}.
-
-
-
-\section*{Publicar métricas en topics}
-Tras arrancar el broker EMQX vamos a
-publicar cada métrica en un topic distinto.
-En concreto, publicaremos cada columna
-del \texttt{report.csv} en el topic
-\texttt{vitals/metrica}. Por ejemplo,
-el ritmo cardíaco \texttt{hr} se publica
-en el topic \texttt{vitals/hr}.
-
-\subsection*{Crear diccionario de métricas}
-Para ello debe modificar crear una
-función en \texttt{utils.py} que reciba
-una línea de fichero y devuelva un diccionario
-python. Llame a dicha función
-\texttt{line\_to\_dict(fpath,line)} y prográmela
-para que devuelva el siguiente diccionario
-al recibir la primera línea del CSV
-de las constantes vitales:
-\begin{lstlisting}[language=python]
-{
-  "idx": 0,
-  "time": 0,
-  "hr": 94,
-  "resp": 21,
-  "SpO2": 97,
-  "temp": 36.2,
-  "output": "Normal"
-}
-\end{lstlisting}
-
-Para probar que la función está bien
-programada ejecútela en el entorno python3:
-\begin{lstlisting}
-$ python3
->>> import utils
->>> utils.line_to_dict('report.csv',X+2)
-\end{lstlisting}
-donde $X$ es el número del grupo al que
-pertenece.
-
-\begin{problemlist}
-    \pbitem Guarde el resultado en el campo
-        \texttt{lectura} del JSON
-        de respuestas.
-\end{problemlist}
-
-
-\subsection*{Publicar en distintos topics}
-A continuación vamos a publicar cada
-métrica de las constantes vitales en un
-topic diferente. En concreto, vamos a publicar
-las constantes vitales
-\texttt{hr},
-\texttt{resp},
-\texttt{SpO2} y
-\texttt{temp}.
-Para ello va a modificar el código de su
-\texttt{client.py} para que haga lo siguiente
-cada vez que lee una línea de constantes
-vitales:
-\begin{enumerate}
-    \item obtener el diccionario de la línea
-        usando
-        \texttt{line\_to\_dict(fpath,line)}; y
-    \item publicar cada constante vital
-        el un topic usando QoS~1.
-\end{enumerate}
-
-
-Una vez haya modificado en \texttt{client.py},
-ejecútelo para que reporte las constantes
-al broker EMQX\footnote{Recuerde identificar
-el puerto y dirección usados por EMQX para
-las comunicaciones MQTT.}, inicie una
-captura en Wireshark en la interfaz
-\texttt{lo}. Deje que se publiquen
-varias constantes vitales y guarde\footnote{
-Recuerde que todas las capturas
-de la práctica deben contener
-\emph{solo} los paquetes MQTT.
-}
-en \texttt{publishes-grupoX.pcapng}
-la captura.
-
-\begin{problemlist}
-    \stepcounter{enumi}
-    \pbitem ¿Cuál es el máximo valor
-        de \texttt{temp} reportado en la
-        captura? Responda en el campo
-        \texttt{maxtemp} del JSON de respuestas.
-\end{problemlist}
-
-
-
-\section*{Suscripción a topic de temperatura}
-A continuación va a suscribirse al
-topic \texttt{vitals/temp} usando el
-script \texttt{subs.py} que se proporciona
-en la práctica. Este script lo usaremos
-para suscribirnos al topic de temperatura
-a través del broker EMQX.
-
-Una vez haya modificado el script
-\texttt{subs.py}, inicie una captura
-wireshark. Después ejecute
-el \texttt{client.py} y \texttt{subs.py}
-para comprobar que se reciben las métricas
-de temperatura. 
-Detenga la captura cuando se hayan
-recibido un par de métricas de temperatura
-y guarde la captura en el
-fichero \texttt{subs-temp-grupoX.pcapng}.
-
-Fíjese en la captura de wireshark y
-responda a las siguientes preguntas:
-\begin{problemlist}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \pbitem ¿Cuál es el tipo de mensaje
-        del \texttt{Subscribe request}?
-    \pbitem ¿Con qué QoS se suscribe
-        al topic \texttt{vitals/temp}?
-    \pbitem ¿Cuál es el puerto
-        utilizado por el
-        cliente para publicar mensajes?
-    \pbitem ¿Cuál es el puerto
-        utilizado por el
-        suscriptor para recibir mensajes?
-\end{problemlist}
-Responda a las preguntas en los
-siguientes campos del JSON de respuestas:
-\texttt{reqtype},
-\texttt{subsqos},
-\texttt{pubport} y
-\texttt{subport}; respetivamente
-
-
-
-
-
-\section*{Suscripción a varios topics}
-Ahora vamos a suscribirnos a todos los
-topics de constantes vitales que reporte
-nuestro \texttt{client.py}. Para ello,
-use un wildcard en el topic al que se
-suscribe el \texttt{subs.py} y compruebe
-que el suscriptor recibe todas las métricas
-reportadas por el \texttt{client.py}.
-
-
-Inicie una captura wireshark
-y ejecute el \texttt{client.py} y
-\texttt{subs.py}. Deje que se publiquen
-unos veinte \texttt{PUBLISH} y guarde en
-\texttt{subs-wildcard-grupoX.pcapng}
-la captura de wireshark.
-\begin{problemlist}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \pbitem ¿A cuántas métricas se suscribe
-        el \texttt{subs.py}?
-    \pbitem ¿Cuál es el topic del
-        \texttt{PUBACK} con
-        \texttt{Message identifier} $10+X$?
-\end{problemlist}
-Responda a las preguntas en los
-siguientes campos del JSON de respuestas
-\texttt{nummetricas} y
-\texttt{pubacktopic}.
-
-
-
-
-\section*{Alerta por anomalías}
-Para terminar vamos a generar alertas cuando
-la métrica \texttt{hr} exceda en un
-$\tfrac{X}{100}$ por ciento el valor medio
-de 89\,\textrm{BPM}.
-Para ello debe modificar el script
-\texttt{subs.py} para que:
-\begin{enumerate}
-    \item compruebe que recibe un mensaje
-        del topic \texttt{vitals/hr}; y
-    \item envíe un \texttt{PUBLISH} en caso
-        de que se cumpla la condición
-        para generar la alerta.
-\end{enumerate}
-Cuando publique la alerta, hágalo en
-el topic \texttt{alerts/hr} y envíe como
-mensaje cuáles son los BPM.
-
-Una vez tenga funcionando el script
-\texttt{subs.py} debe iniciar una captura
-wireshark en la interfaz \texttt{lo}.
-Después inicie el \texttt{client.py}
-y el \texttt{subs.py}. Espere a que se
-publiquen un par de alertas antes de parar
-la captura, guárdela en el archivo
-\texttt{alertas-grupoX.pcapng}, y responda
-a las siguientes preguntas:
-\begin{problemlist}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \stepcounter{enumi}
-    \pbitem ¿Cuántas alertas se envían?
-    \pbitem ¿Cuál es la QoS con la que envía
-        las alertas?
-\end{problemlist}
-Responda a las preguntas en los
-siguientes campos del JSON de respuestas:
-\texttt{numalerts} y
-\texttt{qosalerts}.
-
 
 
 
@@ -567,7 +324,7 @@ que contenga:
     \textbf{Atención II}: una entrega
     sin los archivos especificados,
     o con archivos sin formato especificado
-    tendrá un 0 en los \textbf{Problemas}
+    tendrá un 0 en las \textbf{Preguntas}
     correspondientes.
 \end{tcolorbox}
 

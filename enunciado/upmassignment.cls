@@ -60,12 +60,19 @@
 \newcommand{\school}[1]{\renewcommand{\@school}{#1}}
 \newcommand{\department}[1]{}
 \newcommand{\PB}{{\bfseries Problem}}
+\newcommand{\PR}{{\bfseries Pregunta}}
 \newcounter{problem}
 \renewcommand{\theequation}{\arabic{problem}-\arabic{equation}}
 \newcommand{\e}{\epsilon}
 \newcommand{\asgimplies}{\Rightarrow}
 \newcommand   {\boxit}[1]     {$$\fbox{$#1$}$$}
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+%%% PROBLEM LIST %%%
+%%%%%%%%%%%%%%%%%%%%
 \newcommand{\pbitem}{
 \ifthenelse{\equal{\the\@enumdepth}{0}}{\item}{}
 \ifthenelse{\equal{\the\@enumdepth}{1}}{\item[\PB\ \addtocounter{enumi}{1}\labelenumi]}{}
@@ -82,7 +89,7 @@
 \ifthenelse{\equal{\the\@enumdepth}{3}}{\setcounter{enumiii}{0}}{}%
 \ifthenelse{\equal{\the\@enumdepth}{4}}{\setcounter{enumiv}{0}}{}%
 \begin{list}{%
-\phantom{\CW}\
+%\phantom{\CW}\
 \ifthenelse{\equal{\the\@enumdepth}{1}}{\addtocounter{enumi}{1}\labelenumi}{}%
 \ifthenelse{\equal{\the\@enumdepth}{2}}{\addtocounter{enumii}{1}\labelenumii}{}%
 \ifthenelse{\equal{\the\@enumdepth}{3}}{\addtocounter{enumiii}{1}\labelenumiii}{}%
