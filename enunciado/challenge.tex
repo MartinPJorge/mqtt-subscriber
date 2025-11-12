@@ -75,18 +75,17 @@ Los pacientes del hospital RAID-BIO están siendo monitorizados de forma remota 
 
 En este \textbf{mini-reto} debe desarrollar un sistema de recepción y análisis de las constantes vitales utilizando el protocolo de comunicaciones MQTT. Desde el centro de datos del hospital, el dispositivo suscriptor actuará como punto de supervisión y será responsable de recibir los datos biométricos transmitidos por los pacientes, evaluarlos y generar alertas automáticas si se superan ciertos umbrales.
 
-Para ello, el especialista debe de disponer de una herramienta donde visualiza las alertas generadas por los datos anómalos. Para ello, la herramienta está suscrita, a través de MQTT (script escrito en Python - \texttt{subs.py}) a los datos de los pacientes (escritos en el tópico correspondiente mediante el script \texttt{client.py}). La herramienta del especialista, de forma automática, identificará situaciones críticas y publicará una alerta si es necesario.
+Para ello, el especialista debe disponer de una herramienta donde visualiza las alertas generadas por los datos anómalos. Para ello, la herramienta está suscrita, a través de MQTT (script escrito en Python - \texttt{subs.py}) a los datos de los pacientes (escritos en el tópico correspondiente mediante el script \texttt{client.py}). La herramienta del especialista, de forma automática, identificará situaciones críticas y publicará una alerta si es necesario.
 
 En el apartado \textbf{Recursos} del mini-reto se proporcionan más detalles sobre esta parte del escenario de laboratorio.
 
 
 
 \section*{Objetivos}
-A continuación se enumeran los objetivos
-de este mini-reto:
+Los objetivos de este mini-reto es que
+el estudiante sea capaz de:
 \begin{itemize}
-    \item Aprender cómo se programa un \textbf{suscriptor} de MQTT que recibe y procesa datos biométricos en tiempo real.
-    \item Aprender cómo se generan \textbf{alertas} automáticas cuando se detectan situaciones de riesgo.
+    \item Programar un \textbf{suscriptor} de MQTT que recibe y procesa datos biométricos en tiempo real, generando \textbf{alertas} automáticas cuando se detectan situaciones de riesgo.
     \item Implementar mecanismos de suscripción a diferentes \textbf{topics}, gestionando flujos de datos provenientes de distintos pacientes y asegurando su correcta identificación y procesamiento.
 \end{itemize}
 
