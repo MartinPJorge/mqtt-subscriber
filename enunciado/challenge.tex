@@ -68,25 +68,113 @@
     \centering
     \includegraphics[width=.7\textwidth]{figs/health-monitoring}
 \end{figure}
+\documentclass{upmassignment}
+\usepackage[spanish]{babel}
+\usepackage{ifthen}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{booktabs}
+\usepackage[x11names]{xcolor}
+\usepackage{tcolorbox}
+\usepackage{cclicenses}
+\usepackage{url}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue},
+  backgroundcolor=\color{gray!30},
+}
 
+
+\usetikzlibrary{calc}
+
+
+
+% Para mostrar/ocultar soluciones
+\newboolean{show}
+\setboolean{show}{true}
+\setboolean{show}{false}
+\usepackage{environ}
+\NewEnviron{solucion}{
+  \ifshow
+      \begin{answer}\BODY\end{answer}
+  \fi}
+
+
+
+
+
+
+\coursetitle{Redes y Servicios}
+\courselabel{RSER}
+\exercisesheet{Alertas Médicas}{nano-reto: Lectura de los datos biométricos de los pacientes y desarrollo de un sistema de generación de alertas médicas}
+\student{\ }%
+\semester{Primer Semestre 2025/2026}
+\date{\today}
+\university{Universidad Politécnica de Madrid}
+\school{Departamento de Ingeniería de Sistemas Telemáticos}
+%\usepackage[pdftex]{graphicx}
+%\usepackage{subfigure}
+
+
+\setlength{\textwidth}{5.0in}
+\linespread{1.3}
+\renewcommand{\PB}{{\bfseries Problema}}
+
+
+
+\begin{document}
+
+
+\section*{Pregunta Esencial}
+\emph{¿Cómo leer, analizar, interpretar y reaccionar en tiempo real a los datos biométricos de los pacientes para detectar alteraciones en sus constantes vitales?}.
+
+Se trata de un reto social importante que se está abordando mediante soluciones tecnológicas que ya están penetrando en el mercado. Por ejemplo, EE.UU, en el año 2025, ha proporcionado a 50 millones de pacientes  un sistema de monitorización remota\footnote{https://intuitionlabs.ai/articles/remote-patient-monitoring-united-states-2025-landscape}. En la Comunidad de Madrid, también en 2025, se va a poner en marcha una plataforma para seguimiento domiciliario remoto de pacientes con diabetes, EPOC, hipertensión arterial o insfucienta cardiaca\footnote{https://www.comunidad.madrid/noticias/2025/04/23/comunidad-madrid-estrenara-este-ano-plataforma-sanitaria-inteligente-seguimiento-domiciliario-remoto-pacientes-cronicos}. Los fabricantes de smartwatches han detectado una oportunidad de negocio en este área y ya están incluyendo en sus dispositivos algoritmos de detección de insuficiencia cardíaca\footnote{https://www.androidcentral.com/wearables/samsung-galaxy-watch/samsung-galaxy-watches-will-soon-detect-warning-signs-for-heart-failure}. 
+
+El uso de tecnologías para la monitorización remota de pacientes está reportado diversos beneficios a la sociedad. Por ejemplo, en Escocia, el uso de sistemas de monitorización de presión arterial en casa ha reducido significativamente el número de consultas médicas presenciales (400.000). Otro ejemplo es el de la Universidad de Michigan, que ha implementado un programa de monitorización remota que ha reducido las hospitalizaciones en un 59\%\footnote{https://www.thetimes.com/uk/scotland/article/home-blood-pressure-monitors-free-up-400000-gp-appointments-6q3v9kzqk}.
+
+
+
+
+\begin{figure}[h]
+    \centering
+    % --- Primera subfigura ---
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figs/health-monitoring}
+        \label{fig:health-monitoring}
+    \end{subfigure}
+    \hfill
+    % --- Segunda subfigura ---
+    \begin{subfigure}[b]{0.42\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{enunciado/figs/imagefreeCC.jpg}
+        \label{fig:alert-system}
+    \end{subfigure}
+    \label{fig:monitoring-alerts}
+\end{figure}
 
 \section*{Descripción}
-Los pacientes del hospital RAID-BIO están siendo monitorizados de forma remota a través de sensores que registran de manera continua sus constantes vitales (retos anteriores). Sin embargo, para garantizar la seguridad de los pacientes, el personal sanitario necesita recibir alertas automáticas cada vez que se detecten valores anómalos que puedan indicar una posible emergencia.
+En este nano-reto, usted ayudará al hospital RAID-BIO a desplegar su propio sistema de monitorización remota, utilizando sensores que registrarán de manera continua las constantes vitales de los pacientes (prácticas de laboratorio anteriores). En este nano-reto, su objetivo será desarrollar un sistema de alertas que garantice la seguridad de los pacientes. Debe proporcionar al personal sanitario una herramienta que le permita recibir alertas automáticas cada vez que se detecten valores anómalos que puedan indicar posibles emergencias.
 
-En este \textbf{mini-reto} debe desarrollar un sistema de recepción y análisis de las constantes vitales utilizando el protocolo de comunicaciones MQTT. Desde el centro de datos del hospital, el dispositivo suscriptor actuará como punto de supervisión y será responsable de recibir los datos biométricos transmitidos por los pacientes, evaluarlos y generar alertas automáticas si se superan ciertos umbrales.
+Desarrollará el sistema de recepción y análisis de las constantes vitales utilizando el protocolo de comunicaciones MQTT. Se asumirá que los datos de los pacientes se envían al centro de datos del hospital, donde el dispositivo suscriptor recibe los datos, los evalúa y genera alertas automáticas si se superan ciertos umbrales. El especialista dispondrá de una herramienta donde visualizará las alertas generadas por los datos anómalos, como la que ha desarrollado en prácticas anteriores. En el reto de integración de la asignatura, deberá conectar el sistema de recolección de datos y alertas a la herramienta de visualización. 
 
-Para ello, el especialista debe disponer de una herramienta donde visualiza las alertas generadas por los datos anómalos. Para ello, la herramienta está suscrita, a través de MQTT (script escrito en Python - \texttt{subs.py}) a los datos de los pacientes (escritos en el tópico correspondiente mediante el script \texttt{client.py}). La herramienta del especialista, de forma automática, identificará situaciones críticas y publicará una alerta si es necesario.
+Por todo lo anterior, es necesario que el sistema que va a desarrollar en este nano-reto este suscrito, a través de MQTT (script escrito en Python - \texttt{subs.py}), a los datos de los pacientes (escritos en el tópico correspondiente mediante el script \texttt{client.py}). Además, y de forma automática, este sistema deberá identificar situaciones críticas, publicando una alerta si es necesario.
 
-En el apartado \textbf{Recursos} del mini-reto se proporcionan más detalles sobre esta parte del escenario de laboratorio.
+En el apartado \textbf{Recursos} del nano-reto se proporcionan documentación adicional sobre esta parte del escenario de laboratorio. Consúltela antes de comenzar a abordar el reto.
 
 
 
 \section*{Objetivos}
-Los objetivos de este mini-reto es que
+Los objetivos de este nano-reto es que
 el estudiante sea capaz de:
 \begin{itemize}
     \item Programar un \textbf{suscriptor} de MQTT que recibe y procesa datos biométricos en tiempo real, generando \textbf{alertas} automáticas cuando se detectan situaciones de riesgo.
-    \item Implementar mecanismos de suscripción a diferentes \textbf{topics}, gestionando flujos de datos provenientes de distintos pacientes y asegurando su correcta identificación y procesamiento.
+    \item Implementar mecanismos de suscripción a un \textbf{topic}, que transporta la información biométrica de un paciente.
 \end{itemize}
 
 
@@ -95,12 +183,11 @@ el estudiante sea capaz de:
 \section*{Actividades Guiadas}
 A continuación se presentan las actividades
 que debe realizar para conseguir resolver el
-mini-reto:
+nano-reto:
 
 
 \begin{enumerate}[label=\textbf{Actividad {{\arabic*}}}]
-    \item Estudie los \textbf{Recursos} del mini-reto para entender cuáles son los componentes del escenario de laboratorio. Revise las referencias proporcionadas para el estudio del protocolo MQTT, especialmente la lógica de suscripción y recepción de mensajes.
-    \item Antes de comenzar a programar el script \texttt{subs.py}, inicie el broker EMQX. Para ello, sírvase de las instrucciones de la práctica anterior. Verifique que el contenedor del bróker está activo y que el panel de administración web es accesible desde su navegador:
+    \item Estudie los \textbf{Recursos} del nano-reto para entender cuáles son los componentes del escenario de laboratorio. Revise las referencias proporcionadas para el estudio del protocolo MQTT, especialmente la lógica de suscripción y recepción de mensajes. No pase a la siguiente actividad si no ha completado esta. 
         \begin{center}
             \texttt{localhost:18083}
         \end{center}
@@ -161,12 +248,12 @@ Responda a la \ref{pregunta-lectura}.
 
 
 \section*{Preguntas Guiadas}
-A continuación se presentan las preguntas
+A continuación, se presentan las preguntas
 guiadas asociadas a cada una de las
 actividades guiadas de la práctica.
 Respóndalas para preparar el material
 de entrega que servirá para evaluar cómo
-se ha enfrentado a este mini-reto:
+se ha enfrentado a este nano-reto:
 \begin{enumerate}[label={\bf Pregunta \arabic*}]
     \item \label{pregunta-lectura}
         Guarde el resultado
@@ -315,7 +402,7 @@ que contenga:
         \texttt{subs-wildcard-grupoX.pcapng},\
         \texttt{alertas-grupoX.pcapng}
 \end{enumerate}
-
+ 
 \begin{tcolorbox}
     \textbf{Atención I}: las capturas
     deben contener
