@@ -65,6 +65,10 @@ for pkt in cap:
 
                 temps += [temp]
 
+# In case no temperature report is found fill with negative
+if len(temps) < 1:
+    temps = [-200000]
+
 print(int(max(temps) == respuestas['maxtemp']))
 
 

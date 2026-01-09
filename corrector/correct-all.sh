@@ -64,6 +64,9 @@ for submission in `ls /tmp/clean-entregas`; do
 
     # Correct multiple topics
     publishes=`python3 correct_publishes.py $X $group_dir/publishes-grupo$X.pcapng $group_dir/respuestas-$X.json`
+    if [ -z $publishes ]; then
+        publishes=0
+    fi
     echo -e "\tpublishes: $publishes"
     total=`add_bc $total $publishes`
 
@@ -90,13 +93,13 @@ for submission in `ls /tmp/clean-entregas`; do
     for subsi in `echo $subs_wildcard`; do
         echo -e "\t${questions[i]}: $subsi"
         total=`add_bc $total $subsi`
-        subs_wildcard_all="$subs_wildcard_all$susbi,"
+        subs_wildcard_all="$subs_wildcard_all$subsi,"
         i=$(( i + 1 ))
     done
 
 
     # Correct subscribe multiple topics
-    subs_alert=`python3 correct_alert.py $X $group_dir/alerts-grupo$X.pcapng $group_dir/respuestas-$X.json`
+    subs_alert=`python3 correct_alert.py $X $group_dir/alertas-grupo$X.pcapng $group_dir/respuestas-$X.json`
     questions=( "numalerts" "qosalerts" )
     subs_alert_all=""
     i=0
@@ -110,7 +113,7 @@ for submission in `ls /tmp/clean-entregas`; do
 
     # Output final mark
     for student in `grep alumna $group_dir/respuestas-$X.json | cut -d'"' -f4 | sed 's/ /_/g'`; do
-        echo $student,$X,$lectura,$publishes,$subs_temp_all$subs_wildcardall$subs_alert_all$total >> notas.csv
+        echo $student,$X,$lectura,$publishes,$subs_temp_all$subs_wildcard_all$subs_alert_all$total >> notas.csv
     done
 done
 
